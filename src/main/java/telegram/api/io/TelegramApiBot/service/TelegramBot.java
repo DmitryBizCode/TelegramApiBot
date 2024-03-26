@@ -1,6 +1,5 @@
 package telegram.api.io.TelegramApiBot.service;
 
-import ch.qos.logback.core.joran.conditional.IfAction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -25,6 +24,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         this.config = config;
         List<BotCommand> listcommands = new ArrayList<>();
         listcommands.add(new BotCommand("/start", "your hello message"));
+        listcommands.add(new BotCommand("/help", "short info about bot"));
         try{
             this.execute(new SetMyCommands(listcommands, new BotCommandScopeDefault(), null));
         }
@@ -37,28 +37,36 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()){
             String messageText = update.getMessage().getText();
             Long chatId = update.getMessage().getChatId();
-            if (containsQwerty(messageText))
-                messageText = "люблю";
+            String helpMess = "Hello u have some commands for this bot\n"+
+                    "For example: \n"+"/start - This command is a simple informational greeting\n" +
+                    "/help - This command provides detailed information about all possible commands\n" +
+                    "Write the keyword \"love\" and you will get mutual sympathy";
+            if (containsQwerty(messageText, "love"))
+                messageText = "love";
             switch(messageText){
                 case "/start" :
                     StartCommandRecived(chatId,update.getMessage().getChat().getFirstName());
                     break;
-                case "люблю":
-                    log.info("replied to user : " + update.getMessage().getChat().getFirstName() + " message любові");
-                    sentMessage(chatId,"і я тебе люблю зайка");
+                case "/help" :
+                    log.info("replied to user : " + update.getMessage().getChat().getFirstName() + " message help");
+                    sentMessage(chatId,helpMess);
+                    break;
+                case "love":
+                    log.info("replied to user : " + update.getMessage().getChat().getFirstName() + " message love");
+                    sentMessage(chatId,"And I love you baby");
                     break;
                 default:
-                    log.info("replied to user : " + update.getMessage().getChat().getFirstName() + " message hyita");
-                    sentMessage(chatId,update.getMessage().getChat().getFirstName()+" не пиши всяку хуету сюда");
+                    log.info("replied to user : " + update.getMessage().getChat().getFirstName() + " message incomprehensible");
+                    sentMessage(chatId,update.getMessage().getChat().getFirstName()+" don't write incomprehensible commands here");
             }
         }
     }
-    public static boolean containsQwerty(String inputString) {
+    public static boolean containsQwerty(String inputString, String searchWord) {
         // Розділяємо рядок на слова
         String[] words = inputString.split("\\s+");
 
         for (String word : words)
-            if (word.equalsIgnoreCase("люблю"))
+            if (word.equalsIgnoreCase(searchWord))
                 return true;
 
         return false;

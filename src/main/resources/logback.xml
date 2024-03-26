@@ -7,11 +7,8 @@
 
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>/var/log/telegram.api.io/SpringDemoLB4Bot/app.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-            <!-- each archived file, size max 10MB -->
-            <maxFileSize>10MB</maxFileSize>
-            <!-- total size of all archive files, if total size > 20GB, it will delete old archived file -->
+            <maxFileSize>1MB</maxFileSize>
             <totalSizeCap>1GB</totalSizeCap>
-            <!-- 60 days to keep -->
             <maxHistory>60</maxHistory>
         </rollingPolicy>
 
